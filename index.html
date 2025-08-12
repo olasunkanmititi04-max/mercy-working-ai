@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QueenAura AI Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0d1b2a;
+      color: white;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #1b263b;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    .sidebar h2 {
+      color: #00aaff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 12px;
+      text-decoration: none;
+      margin: 5px 0;
+      border-radius: 5px;
+      transition: background 0.3s;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #00aaff;
+      color: #001a33;
+    }
+    /* Main content */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0d1b2a url('https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
+      position: relative;
+    }
+    /* Chat */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.45);
+      margin: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #00aaff;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .message {
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 10px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .user {
+      background: #0077ff;
+      align-self: flex-end;
+      color: white;
+      font-weight: 600;
+    }
+    .ai {
+      background: #1b263b;
+      border: 1px solid #00aaff;
+      align-self: flex-start;
+      color: #cce6ff;
+    }
+    .typing-indicator {
+      font-style: italic;
+      color: #00aaff;
+      padding-left: 12px;
+      margin: 5px 0;
+      max-width: 70%;
+      align-self: flex-start;
+    }
+    .input-area {
+      display: flex;
+      padding: 15px 20px;
+      background: #1b263b;
+      border-top: 1px solid #00aaff;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+      background: #0d1b2a;
+      color: white;
+      border-radius: 8px;
+      margin-right: 15px;
+      font-size: 1rem;
+    }
+    .input-area input::placeholder {
+      color: #99cfff;
+    }
+    .input-area button {
+      padding: 12px 20px;
+      background: #00aaff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .input-area button:disabled {
+      background: #5599dd;
+      cursor: not-allowed;
+    }
+    .input-area button:hover:not(:disabled) {
+      background: #0077ff;
+    }
+    .input-area button#clear-btn {
+      background: #ff4444;
+      margin-left: 10px;
+      transition: background 0.3s;
+    }
+    .input-area button#clear-btn:hover {
+      background: #cc0000;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #001a33;
+      padding: 30px 25px 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px #00aaff;
+      color: white;
+      position: relative;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #00aaff;
+      user-select: none;
+      transition: color 0.3s;
+    }
+    .modal-close:hover {
+      color: #0077ff;
+    }
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #00aaff;
+      margin: 20px auto 15px;
+      display: block;
+      object-fit: cover;
+    }
+    .modal h2 {
+      margin-bottom: 15px;
+      color: #00aaff;
+    }
+    .modal p {
+      margin: 8px 0;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    .modal label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>QueenAura</h2>
+    <a id="nav-dashboard" class="active">Dashboard</a>
+    <a id="nav-chat">AI Chat</a>
+    <a id="nav-profile">Profile</a>
+    <a id="nav-settings">Settings</a>
+  </div>
+
+  <div class="main">
+
+    <!-- Chat container -->
+    <div id="chat-container" class="chat-container">
+      <div class="chat-box" id="chat-box" aria-live="polite" aria-label="Chat messages"></div>
+      <div class="input-area">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message..."
+          autocomplete="off"
+          aria-label="Message input"
+        />
+        <button id="send-btn" aria-label="Send message">Send</button>
+        <button id="clear-btn" aria-label="Clear chat history" title="Clear chat">Clear</button>
+      </div>
+    </div>
+
+    <!-- Profile/Settings modal -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-content">
+        <span id="modal-close" class="modal-close" aria-label="Close modal">&times;</span>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const API_KEY = "AIzaSyBsoY43TTnQzBGulwmo1VqwLKCcAEH9NvQ";
+  const chatBox = document.getElementById("chat-box");
+  const userInput = document.getElementById("user-input");
+  const sendBtn = document.getElementById("send-btn");
+  const clearBtn = document.getElementById("clear-btn");
+
+  // Sidebar nav elements
+  const navDashboard = document.getElementById("nav-dashboard");
+  const navChat = document.getElementById("nav-chat");
+  const navProfile = document.getElementById("nav-profile");
+  const navSettings = document.getElementById("nav-settings");
+
+  // Modal elements
+  const modal = document.getElementById("modal");
+  const modalBody = document.getElementById("modal-body");
+  const modalClose = document.getElementById("modal-close");
+
+  // Typing indicator element (created dynamically)
+  let typingIndicator = null;
+
+  const darkModeKey = "queenAuraDarkMode";
+
+  // Track active sidebar item
+  function setActiveNav(activeLink) {
+    [navDashboard, navChat, navProfile, navSettings].forEach(link => {
+      if (link === activeLink) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+  }
+
+  // Show chat container
+  function showChat() {
+    document.getElementById("chat-container").style.display = "flex";
+    closeModal();
+  }
+
+  // Modal controls
+  function openModal(contentHtml, title) {
+    modalBody.innerHTML = `
+      <h2 id="modal-title">${title}</h2>
+      ${contentHtml}
+    `;
+    modal.classList.add("active");
+  }
+  function closeModal() {
+    modal.classList.remove("active");
+  }
+
+  modalClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Sidebar navigation handlers
+  navDashboard.addEventListener("click", (e) => {
+    e.preventDefault();
+    setActiveNav(navDashboard);
+    showChat();
+  });
+  navChat.addEventListener("click", (e) => {
+    e.preventDefault();
+    setActiveNav(navChat);
+    showChat();
+  });
+  navProfile.addEventListener("click", (e) => {
+    e.preventDefault();
+    setActiveNav(navProfile);
+    document.getElementById("chat-container").style.display = "none";
+    openModal(`
+      <img
+        src="https://i.ibb.co/hrTqv6X/8bd14c880091f60ba92ced41af59b510-1.jpg"
+        alt="QueenAura Profile Picture"
+        class="profile-pic"
+      />
+      <p><strong>Name:</strong> olasunkanmi titiayo mercy</p>
+      <p><strong>Nickname:</strong> queenaura</p>
+      <p><strong>Email:</strong> olasunkanmititi04@gmail.com</p>
+      <p><strong>Role:</strong> AI Assistant</p>
+      <p><strong>Bio:</strong> Your friendly, blue-tech style AI chat buddy.</p>
+    `, "Profile");
+  });
+  navSettings.addEventListener("click", (e) => {
+    e.preventDefault();
+    setActiveNav(navSettings);
+    document.getElementById("chat-container").style.display = "none";
+    openModal(`
+      <label for="darkModeToggle">
+        <input type="checkbox" id="darkModeToggle" />
+        Enable Dark Mode
+      </label>
+      <p style="margin-top: 15px; font-size: 0.9rem; color: #99cfff;">
+        More settings coming soon...
+      </p>
+    `, "Settings");
+
+    // Dark mode toggle functionality
+    const darkModeToggle = document.getElementById("darkModeToggle");
+
+    // Set toggle state from saved preference
+    const savedMode = localStorage.getItem(darkModeKey);
+    darkModeToggle.checked = savedMode !== "light"; // default dark mode
+
+    applyDarkMode(darkModeToggle.checked);
+
+    darkModeToggle.addEventListener("change", (e) => {
+      const isDark = e.target.checked;
+      applyDarkMode(isDark);
+      saveDarkModeSetting(isDark);
+    });
+  });
+
+  // Append chat message and save history
+  function appendMessage(text, sender) {
+    // Remove typing indicator if present
+    removeTypingIndicator();
+
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    msg.textContent = text;
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Save updated chat history
+    saveChatHistory();
+  }
+
+  // Show typing indicator
+  function showTypingIndicator() {
+    if (typingIndicator) return; // Already shown
+    typingIndicator = document.createElement("div");
+    typingIndicator.className = "typing-indicator";
+    typingIndicator.textContent = "Queen Aura is typing...";
+    chatBox.appendChild(typingIndicator);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // Remove typing indicator
+  function removeTypingIndicator() {
+    if (typingIndicator) {
+      typingIndicator.remove();
+      typingIndicator = null;
+    }
+  }
+
+  // Save chat history to localStorage
+  function saveChatHistory() {
+    const messages = [];
+    chatBox.querySelectorAll(".message").forEach(msg => {
+      messages.push({
+        text: msg.textContent,
+        sender: msg.classList.contains("user") ? "user" : "ai"
+      });
+    });
+    localStorage.setItem("queenAuraChatHistory", JSON.stringify(messages));
+  }
+
+  // Load chat history from localStorage
+  function loadChatHistory() {
+    const history = localStorage.getItem("queenAuraChatHistory");
+    if (history) {
+      try {
+        const messages = JSON.parse(history);
+        messages.forEach(({ text, sender }) => {
+          appendMessage(text, sender);
+        });
+      } catch {
+        localStorage.removeItem("queenAuraChatHistory"); // Clean corrupt data
+      }
+    }
+  }
+
+  // Send message to Gemini API with typing indicator
+  async function sendMessage() {
+    const text = userInput.value.trim();
+    if (!text) return;
+    appendMessage(text, "user");
+    userInput.value = "";
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Sending...";
+    showTypingIndicator();
+
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: text }] }]
+          })
+        }
+      );
+      const data = await response.json();
+      const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No response.";
+      removeTypingIndicator();
+      appendMessage(aiText, "ai");
+    } catch (error) {
+      removeTypingIndicator();
+      appendMessage("Error: " + error.message, "ai");
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Send";
+      userInput.focus();
+    }
+  }
+
+  // Dark mode helpers
+  function applyDarkMode(isDark) {
+    if (isDark) {
+      document.body.style.backgroundColor = "#0d1b2a";
+      document.body.style.color = "white";
+    } else {
+      document.body.style.backgroundColor = "white";
+      document.body.style.color = "black";
+    }
+  }
+
+  function saveDarkModeSetting(isDark) {
+    localStorage.setItem(darkModeKey, isDark ? "dark" : "light");
+  }
+
+  function loadDarkModeSetting() {
+    const savedMode = localStorage.getItem(darkModeKey);
+    if (savedMode === "light") {
+      applyDarkMode(false);
+      if (document.getElementById("darkModeToggle")) {
+        document.getElementById("darkModeToggle").checked = false;
+      }
+    } else {
+      applyDarkMode(true);
+      if (document.getElementById("darkModeToggle")) {
+        document.getElementById("darkModeToggle").checked = true;
+      }
+    }
+  }
+
+  // Clear chat history button handler
+  clearBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to clear chat history😁?")) {
+      localStorage.removeItem("queenAuraChatHistory");
+      chatBox.innerHTML = "";
+    }
+  });
+
+  sendBtn.addEventListener("click", sendMessage);
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  // Initialize showing chat by default
+  showChat();
+  loadChatHistory();
+  loadDarkModeSetting();
+</script>
+
+</body>
+</html>
