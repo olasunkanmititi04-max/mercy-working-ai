@@ -2,336 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>QueenAura AI Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Queen Aura Chatbot</title>
 
-  <!-- MONDIAD verification -->
+  <!-- Mondiad Verification -->
   <meta name="mnd-ver" content="lbnzftemozmce5xvcsnaq" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #0d1b2a;
-      color: white;
+      color: #e0e1dd;
       display: flex;
+      flex-direction: column;
       height: 100vh;
-      overflow: hidden;
-      transition: background-color 0.3s, color 0.3s;
     }
-    /* Sidebar */
-    .sidebar {
-      width: 250px;
+    header {
       background: #1b263b;
-      padding: 20px;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      user-select: none;
-    }
-    .sidebar h2 {
-      color: #00aaff;
+      padding: 15px;
       text-align: center;
-      margin-bottom: 30px;
+      font-size: 20px;
+      font-weight: bold;
     }
-    .sidebar a {
-      display: block;
-      color: white;
-      padding: 12px;
-      text-decoration: none;
-      margin: 5px 0;
-      border-radius: 5px;
-      transition: background 0.3s;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .sidebar a:hover,
-    .sidebar a.active {
-      background: #00aaff;
-      color: #001a33;
-    }
-    /* Main content */
-    .main {
+    #chatbox {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #0d1b2a url('https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
-      position: relative;
-    }
-    /* Chat */
-    .chat-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: rgba(0, 0, 0, 0.45);
-      margin: 20px;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 10px #00aaff;
-    }
-    .chat-box {
-      flex: 1;
-      padding: 20px;
+      padding: 15px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
     .message {
-      max-width: 70%;
+      max-width: 75%;
       padding: 10px;
       border-radius: 10px;
-      line-height: 1.4;
-      word-wrap: break-word;
-      white-space: pre-wrap;
     }
     .user {
-      background: #0077ff;
       align-self: flex-end;
+      background: #1b6ca8;
       color: white;
-      font-weight: 600;
     }
-    .ai {
-      background: #1b263b;
-      border: 1px solid #00aaff;
+    .bot {
       align-self: flex-start;
-      color: #cce6ff;
+      background: #415a77;
     }
-    .typing-indicator {
-      font-style: italic;
-      color: #00aaff;
-      padding-left: 12px;
-      margin: 5px 0;
-      max-width: 70%;
-      align-self: flex-start;
-    }
-    .input-area {
+    footer {
       display: flex;
-      padding: 15px 20px;
+      padding: 10px;
       background: #1b263b;
-      border-top: 1px solid #00aaff;
     }
-    .input-area input {
+    footer input {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       border: none;
+      border-radius: 8px;
       outline: none;
-      background: #0d1b2a;
-      color: white;
-      border-radius: 8px;
-      margin-right: 15px;
-      font-size: 1rem;
     }
-    .input-area input::placeholder {
-      color: #99cfff;
-    }
-    .input-area button {
-      padding: 12px 20px;
-      background: #00aaff;
+    footer button {
+      margin-left: 8px;
+      padding: 10px 15px;
       border: none;
-      color: white;
       border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-    .input-area button:disabled {
-      background: #5599dd;
-      cursor: not-allowed;
-    }
-    .input-area button:hover:not(:disabled) {
-      background: #0077ff;
-    }
-    .input-area button#clear-btn {
-      background: #ff4444;
-      margin-left: 10px;
-      transition: background 0.3s;
-    }
-    .input-area button#clear-btn:hover {
-      background: #cc0000;
-    }
-    /* Modal */
-    .modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-    }
-    .modal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: #001a33;
-      padding: 30px 25px 25px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 20px #00aaff;
+      background: #1b6ca8;
       color: white;
-      position: relative;
-      text-align: center;
-    }
-    .modal-close {
-      position: absolute;
-      top: 12px;
-      right: 15px;
-      font-size: 28px;
       font-weight: bold;
       cursor: pointer;
-      color: #00aaff;
-      user-select: none;
-      transition: color 0.3s;
     }
-    .modal-close:hover {
-      color: #0077ff;
+    footer button:hover {
+      background: #144272;
     }
-    .profile-pic {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 3px solid #00aaff;
-      margin: 20px auto 15px;
-      display: block;
-      object-fit: cover;
-    }
-    .modal h2 {
-      margin-bottom: 15px;
-      color: #00aaff;
-    }
-    .modal p {
-      margin: 8px 0;
-      font-size: 1rem;
-      line-height: 1.4;
-    }
-    .modal label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .modal input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
-    /* Mondiad Ad Zone */
     .ad-zone {
-      margin: 15px 20px;
-      padding: 15px;
-      background-color: #1b263b;
-      border: 1px solid #00aaff;
       text-align: center;
-      border-radius: 10px;
-      color: #00aaff;
-      font-weight: 600;
+      margin: 15px;
+      padding: 10px;
+      background: #1b263b;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>QueenAura</h2>
-    <a id="nav-dashboard" class="active">Dashboard</a>
-    <a id="nav-chat">AI Chat</a>
-    <a id="nav-profile">Profile</a>
-    <a id="nav-settings">Settings</a>
+  <header>👑 Queen Aura Chatbot</header>
+
+  <div id="chatbox"></div>
+
+  <!-- Mondiad Ad Zone -->
+  <div class="ad-zone">
+    <script src="https://cdn.mondiad.net/sdk/display.min.js"></script>
+    <div id="mondiad-zone-24280"></div>
+    <script>
+      Mondiad.display("24280");
+    </script>
   </div>
 
-  <div class="main">
-    <!-- Chat container -->
-    <div id="chat-container" class="chat-container">
-      <div class="chat-box" id="chat-box" aria-live="polite" aria-label="Chat messages"></div>
-      <div class="input-area">
-        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" aria-label="Message input" />
-        <button id="send-btn" aria-label="Send message">Send</button>
-        <button id="clear-btn" aria-label="Clear chat history" title="Clear chat">Clear</button>
-      </div>
+  <footer>
+    <input type="text" id="userInput" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+  </footer>
 
-      <!-- MONDIAD AD ZONE -->
-      <div class="ad-zone">
-        <script type="text/javascript" src="https://mondiad.com/ad.js?zoneid=24280"></script>
-      </div>
-    </div>
+  <script>
+    const chatbox = document.getElementById("chatbox");
+    const userInput = document.getElementById("userInput");
 
-    <!-- Modal -->
-    <div id="modal" class="modal" role="dialog" aria-modal="true">
-      <div class="modal-content">
-        <span id="modal-close" class="modal-close">&times;</span>
-        <div id="modal-body"></div>
-      </div>
-    </div>
-  </div>
+    function sendMessage() {
+      let text = userInput.value.trim();
+      if (!text) return;
+      
+      // User message
+      let userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.innerText = text;
+      chatbox.appendChild(userMsg);
 
-<script>
-  const chatBox = document.getElementById("chat-box");
-  const userInput = document.getElementById("user-input");
-  const sendBtn = document.getElementById("send-btn");
-  const clearBtn = document.getElementById("clear-btn");
+      // Bot typing...
+      let botMsg = document.createElement("div");
+      botMsg.className = "message bot";
+      botMsg.innerText = "Queen Aura is typing...";
+      chatbox.appendChild(botMsg);
+      chatbox.scrollTop = chatbox.scrollHeight;
 
-  const navDashboard = document.getElementById("nav-dashboard");
-  const navChat = document.getElementById("nav-chat");
-  const navProfile = document.getElementById("nav-profile");
-  const navSettings = document.getElementById("nav-settings");
+      userInput.value = "";
 
-  const modal = document.getElementById("modal");
-  const modalBody = document.getElementById("modal-body");
-  const modalClose = document.getElementById("modal-close");
+      // Fake AI reply after delay
+      setTimeout(() => {
+        botMsg.innerText = getBotReply(text);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }, 1000);
+    }
 
-  // Sidebar navigation
-  [navDashboard, navChat, navProfile, navSettings].forEach(nav => {
-    nav.addEventListener('click', () => {
-      [navDashboard, navChat, navProfile, navSettings].forEach(n => n.classList.remove('active'));
-      nav.classList.add('active');
-      modalBody.innerHTML = `<h2>${nav.textContent}</h2><p>Content for ${nav.textContent} goes here.</p>`;
-      modal.classList.add('active');
-    });
-  });
-
-  modalClose.addEventListener('click', () => {
-    modal.classList.remove('active');
-  });
-
-  // Chat functionality (dummy AI responses)
-  sendBtn.addEventListener('click', () => {
-    const msg = userInput.value.trim();
-    if (!msg) return;
-    appendMessage(msg, 'user');
-    userInput.value = '';
-    // AI typing
-    const typing = document.createElement('div');
-    typing.classList.add('typing-indicator');
-    typing.textContent = 'QueenAura is typing...';
-    chatBox.appendChild(typing);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    setTimeout(() => {
-      typing.remove();
-      appendMessage('Hello! This is a dummy AI response.', 'ai');
-    }, 1000);
-  });
-
-  clearBtn.addEventListener('click', () => {
-    chatBox.innerHTML = '';
-  });
-
-  function appendMessage(text, type) {
-    const div = document.createElement('div');
-    div.classList.add('message', type);
-    div.textContent = text;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  // Enter key sends message
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendBtn.click();
-  });
-</script>
+    function getBotReply(msg) {
+      msg = msg.toLowerCase();
+      if (msg.includes("hello")) return "Hello 👋, I’m Queen Aura!";
+      if (msg.includes("how are you")) return "I’m doing great 🌸, thanks for asking!";
+      if (msg.includes("bye")) return "Goodbye 👑, come back soon!";
+      return "Hmm 🤔... I don’t know that yet, but I’m learning every day!";
+    }
+  </script>
 </body>
 </html>
