@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <title>QueenAura AI Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- MONDIAD verification -->
+  <meta name="mnd-ver" content="lbnzftemozmce5xvcsnaq" />
+
   <style>
     body {
       margin: 0;
@@ -147,7 +151,6 @@
     .input-area button#clear-btn:hover {
       background: #cc0000;
     }
-
     /* Modal */
     .modal {
       position: fixed;
@@ -218,10 +221,20 @@
       height: 20px;
       cursor: pointer;
     }
+    /* Mondiad Ad Zone */
+    .ad-zone {
+      margin: 15px 20px;
+      padding: 15px;
+      background-color: #1b263b;
+      border: 1px solid #00aaff;
+      text-align: center;
+      border-radius: 10px;
+      color: #00aaff;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
-
   <div class="sidebar">
     <h2>QueenAura</h2>
     <a id="nav-dashboard" class="active">Dashboard</a>
@@ -231,291 +244,94 @@
   </div>
 
   <div class="main">
-
     <!-- Chat container -->
     <div id="chat-container" class="chat-container">
       <div class="chat-box" id="chat-box" aria-live="polite" aria-label="Chat messages"></div>
       <div class="input-area">
-        <input
-          type="text"
-          id="user-input"
-          placeholder="Type your message..."
-          autocomplete="off"
-          aria-label="Message input"
-        />
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" aria-label="Message input" />
         <button id="send-btn" aria-label="Send message">Send</button>
         <button id="clear-btn" aria-label="Clear chat history" title="Clear chat">Clear</button>
       </div>
-    </div>
 
-    <!-- Profile/Settings modal -->
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modal-content">
-        <span id="modal-close" class="modal-close" aria-label="Close modal">&times;</span>
-        <div id="modal-body"></div>
+      <!-- MONDIAD AD ZONE -->
+      <div class="ad-zone">
+        <script type="text/javascript" src="https://mondiad.com/ad.js?zoneid=24280"></script>
       </div>
     </div>
 
+    <!-- Modal -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <span id="modal-close" class="modal-close">&times;</span>
+        <div id="modal-body"></div>
+      </div>
+    </div>
   </div>
 
 <script>
-  const API_KEY = "AIzaSyBsoY43TTnQzBGulwmo1VqwLKCcAEH9NvQ";
   const chatBox = document.getElementById("chat-box");
   const userInput = document.getElementById("user-input");
   const sendBtn = document.getElementById("send-btn");
   const clearBtn = document.getElementById("clear-btn");
 
-  // Sidebar nav elements
   const navDashboard = document.getElementById("nav-dashboard");
   const navChat = document.getElementById("nav-chat");
   const navProfile = document.getElementById("nav-profile");
   const navSettings = document.getElementById("nav-settings");
 
-  // Modal elements
   const modal = document.getElementById("modal");
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
 
-  // Typing indicator element (created dynamically)
-  let typingIndicator = null;
-
-  const darkModeKey = "queenAuraDarkMode";
-
-  // Track active sidebar item
-  function setActiveNav(activeLink) {
-    [navDashboard, navChat, navProfile, navSettings].forEach(link => {
-      if (link === activeLink) {
-        link.classList.add("active");
-      } else {
-        link.classList.remove("active");
-      }
-    });
-  }
-
-  // Show chat container
-  function showChat() {
-    document.getElementById("chat-container").style.display = "flex";
-    closeModal();
-  }
-
-  // Modal controls
-  function openModal(contentHtml, title) {
-    modalBody.innerHTML = `
-      <h2 id="modal-title">${title}</h2>
-      ${contentHtml}
-    `;
-    modal.classList.add("active");
-  }
-  function closeModal() {
-    modal.classList.remove("active");
-  }
-
-  modalClose.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  // Sidebar navigation handlers
-  navDashboard.addEventListener("click", (e) => {
-    e.preventDefault();
-    setActiveNav(navDashboard);
-    showChat();
-  });
-  navChat.addEventListener("click", (e) => {
-    e.preventDefault();
-    setActiveNav(navChat);
-    showChat();
-  });
-  navProfile.addEventListener("click", (e) => {
-    e.preventDefault();
-    setActiveNav(navProfile);
-    document.getElementById("chat-container").style.display = "none";
-    openModal(`
-      <img
-        src="https://i.ibb.co/hrTqv6X/8bd14c880091f60ba92ced41af59b510-1.jpg"
-        alt="QueenAura Profile Picture"
-        class="profile-pic"
-      />
-      <p><strong>Name:</strong> olasunkanmi titiayo mercy</p>
-      <p><strong>Nickname:</strong> queenaura</p>
-      <p><strong>Email:</strong> olasunkanmititi04@gmail.com</p>
-      <p><strong>Role:</strong> AI Assistant</p>
-      <p><strong>Bio:</strong> Your friendly, blue-tech style AI chat buddy.</p>
-    `, "Profile");
-  });
-  navSettings.addEventListener("click", (e) => {
-    e.preventDefault();
-    setActiveNav(navSettings);
-    document.getElementById("chat-container").style.display = "none";
-    openModal(`
-      <label for="darkModeToggle">
-        <input type="checkbox" id="darkModeToggle" />
-        Enable Dark Mode
-      </label>
-      <p style="margin-top: 15px; font-size: 0.9rem; color: #99cfff;">
-        More settings coming soon...
-      </p>
-    `, "Settings");
-
-    // Dark mode toggle functionality
-    const darkModeToggle = document.getElementById("darkModeToggle");
-
-    // Set toggle state from saved preference
-    const savedMode = localStorage.getItem(darkModeKey);
-    darkModeToggle.checked = savedMode !== "light"; // default dark mode
-
-    applyDarkMode(darkModeToggle.checked);
-
-    darkModeToggle.addEventListener("change", (e) => {
-      const isDark = e.target.checked;
-      applyDarkMode(isDark);
-      saveDarkModeSetting(isDark);
+  // Sidebar navigation
+  [navDashboard, navChat, navProfile, navSettings].forEach(nav => {
+    nav.addEventListener('click', () => {
+      [navDashboard, navChat, navProfile, navSettings].forEach(n => n.classList.remove('active'));
+      nav.classList.add('active');
+      modalBody.innerHTML = `<h2>${nav.textContent}</h2><p>Content for ${nav.textContent} goes here.</p>`;
+      modal.classList.add('active');
     });
   });
 
-  // Append chat message and save history
-  function appendMessage(text, sender) {
-    // Remove typing indicator if present
-    removeTypingIndicator();
+  modalClose.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
 
-    const msg = document.createElement("div");
-    msg.classList.add("message", sender);
-    msg.textContent = text;
-    chatBox.appendChild(msg);
+  // Chat functionality (dummy AI responses)
+  sendBtn.addEventListener('click', () => {
+    const msg = userInput.value.trim();
+    if (!msg) return;
+    appendMessage(msg, 'user');
+    userInput.value = '';
+    // AI typing
+    const typing = document.createElement('div');
+    typing.classList.add('typing-indicator');
+    typing.textContent = 'QueenAura is typing...';
+    chatBox.appendChild(typing);
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Save updated chat history
-    saveChatHistory();
-  }
+    setTimeout(() => {
+      typing.remove();
+      appendMessage('Hello! This is a dummy AI response.', 'ai');
+    }, 1000);
+  });
 
-  // Show typing indicator
-  function showTypingIndicator() {
-    if (typingIndicator) return; // Already shown
-    typingIndicator = document.createElement("div");
-    typingIndicator.className = "typing-indicator";
-    typingIndicator.textContent = "Queen Aura is typing...";
-    chatBox.appendChild(typingIndicator);
+  clearBtn.addEventListener('click', () => {
+    chatBox.innerHTML = '';
+  });
+
+  function appendMessage(text, type) {
+    const div = document.createElement('div');
+    div.classList.add('message', type);
+    div.textContent = text;
+    chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // Remove typing indicator
-  function removeTypingIndicator() {
-    if (typingIndicator) {
-      typingIndicator.remove();
-      typingIndicator = null;
-    }
-  }
-
-  // Save chat history to localStorage
-  function saveChatHistory() {
-    const messages = [];
-    chatBox.querySelectorAll(".message").forEach(msg => {
-      messages.push({
-        text: msg.textContent,
-        sender: msg.classList.contains("user") ? "user" : "ai"
-      });
-    });
-    localStorage.setItem("queenAuraChatHistory", JSON.stringify(messages));
-  }
-
-  // Load chat history from localStorage
-  function loadChatHistory() {
-    const history = localStorage.getItem("queenAuraChatHistory");
-    if (history) {
-      try {
-        const messages = JSON.parse(history);
-        messages.forEach(({ text, sender }) => {
-          appendMessage(text, sender);
-        });
-      } catch {
-        localStorage.removeItem("queenAuraChatHistory"); // Clean corrupt data
-      }
-    }
-  }
-
-  // Send message to Gemini API with typing indicator
-  async function sendMessage() {
-    const text = userInput.value.trim();
-    if (!text) return;
-    appendMessage(text, "user");
-    userInput.value = "";
-    sendBtn.disabled = true;
-    sendBtn.textContent = "Sending...";
-    showTypingIndicator();
-
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: text }] }]
-          })
-        }
-      );
-      const data = await response.json();
-      const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No response.";
-      removeTypingIndicator();
-      appendMessage(aiText, "ai");
-    } catch (error) {
-      removeTypingIndicator();
-      appendMessage("Error: " + error.message, "ai");
-    } finally {
-      sendBtn.disabled = false;
-      sendBtn.textContent = "Send";
-      userInput.focus();
-    }
-  }
-
-  // Dark mode helpers
-  function applyDarkMode(isDark) {
-    if (isDark) {
-      document.body.style.backgroundColor = "#0d1b2a";
-      document.body.style.color = "white";
-    } else {
-      document.body.style.backgroundColor = "white";
-      document.body.style.color = "black";
-    }
-  }
-
-  function saveDarkModeSetting(isDark) {
-    localStorage.setItem(darkModeKey, isDark ? "dark" : "light");
-  }
-
-  function loadDarkModeSetting() {
-    const savedMode = localStorage.getItem(darkModeKey);
-    if (savedMode === "light") {
-      applyDarkMode(false);
-      if (document.getElementById("darkModeToggle")) {
-        document.getElementById("darkModeToggle").checked = false;
-      }
-    } else {
-      applyDarkMode(true);
-      if (document.getElementById("darkModeToggle")) {
-        document.getElementById("darkModeToggle").checked = true;
-      }
-    }
-  }
-
-  // Clear chat history button handler
-  clearBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to clear chat history😁?")) {
-      localStorage.removeItem("queenAuraChatHistory");
-      chatBox.innerHTML = "";
-    }
+  // Enter key sends message
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendBtn.click();
   });
-
-  sendBtn.addEventListener("click", sendMessage);
-  userInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendMessage();
-  });
-
-  // Initialize showing chat by default
-  showChat();
-  loadChatHistory();
-  loadDarkModeSetting();
 </script>
-
 </body>
 </html>
