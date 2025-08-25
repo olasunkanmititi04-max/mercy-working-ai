@@ -1,142 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Queen Aura Chatbot</title>
-
+  <meta charset="UTF-8">
+  <title>Queen Aura's Card</title>
+  
   <!-- Mondiad Verification -->
   <meta name="mnd-ver" content="lbnzftemozmce5xvcsnaq" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #0d1b2a;
-      color: #e0e1dd;
+      background-color: #121212;
+      font-family: 'Arial', sans-serif;
       display: flex;
       flex-direction: column;
+      justify-content: flex-start; /* start so ad shows at top */
+      align-items: center;
       height: 100vh;
+      margin: 0;
+      padding-top: 20px;
     }
-    header {
-      background: #1b263b;
-      padding: 15px;
+
+    #ad-zone {
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: #1f1f1f;
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
       text-align: center;
-      font-size: 20px;
-      font-weight: bold;
+      box-shadow: 0 0 20px #ff66cc;
+      max-width: 300px;
     }
-    #chatbox {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+
+    .card img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      border: 3px solid #ff66cc;
     }
-    .message {
-      max-width: 75%;
-      padding: 10px;
-      border-radius: 10px;
+
+    .card h1 {
+      margin-top: 15px;
+      font-size: 24px;
     }
-    .user {
-      align-self: flex-end;
-      background: #1b6ca8;
-      color: white;
+
+    .card p {
+      font-size: 14px;
+      color: #ccc;
     }
-    .bot {
-      align-self: flex-start;
-      background: #415a77;
-    }
-    footer {
-      display: flex;
-      padding: 10px;
-      background: #1b263b;
-    }
-    footer input {
-      flex: 1;
-      padding: 10px;
+
+    .card button {
+      margin-top: 10px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 8px;
-      outline: none;
-    }
-    footer button {
-      margin-left: 8px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: #1b6ca8;
+      border-radius: 25px;
+      background-color: #ff66cc;
       color: white;
-      font-weight: bold;
       cursor: pointer;
+      font-weight: bold;
     }
-    footer button:hover {
-      background: #144272;
-    }
-    .ad-zone {
-      text-align: center;
-      margin: 15px;
-      padding: 10px;
-      background: #1b263b;
-      border-radius: 8px;
+
+    .card button:hover {
+      background-color: #ff33aa;
     }
   </style>
 </head>
 <body>
-  <header>👑 Queen Aura Chatbot</header>
 
-  <div id="chatbox"></div>
-
-  <!-- Mondiad Ad Zone -->
-  <div class="ad-zone">
-    <script src="https://cdn.mondiad.net/sdk/display.min.js"></script>
-    <div id="mondiad-zone-24280"></div>
-    <script>
-      Mondiad.display("24280");
-    </script>
+  <!-- Mondiad Ad at Top -->
+  <div id="ad-zone">
+    <script async src="https://cdn.mondiad.net/placement/24280.js"></script>
   </div>
 
-  <footer>
-    <input type="text" id="userInput" placeholder="Type a message..." />
-    <button onclick="sendMessage()">Send</button>
-  </footer>
+  <!-- Queen Aura Profile Card -->
+  <div class="card">
+    <img src="https://i.ibb.co/hrTqv6X/8bd14c880091f60ba92ced41af59b510-1.jpg" alt="Queen Aura">
+    <h1>Queen Aura</h1>
+    <p>AI Buddy, Meme Queen 👑<br>Loves coding and good vibes!</p>
+    <button onclick="window.open('https://wa.me/2348163005682', '_blank');">
+      Chat With Me
+    </button>
+  </div>
 
-  <script>
-    const chatbox = document.getElementById("chatbox");
-    const userInput = document.getElementById("userInput");
-
-    function sendMessage() {
-      let text = userInput.value.trim();
-      if (!text) return;
-      
-      // User message
-      let userMsg = document.createElement("div");
-      userMsg.className = "message user";
-      userMsg.innerText = text;
-      chatbox.appendChild(userMsg);
-
-      // Bot typing...
-      let botMsg = document.createElement("div");
-      botMsg.className = "message bot";
-      botMsg.innerText = "Queen Aura is typing...";
-      chatbox.appendChild(botMsg);
-      chatbox.scrollTop = chatbox.scrollHeight;
-
-      userInput.value = "";
-
-      // Fake AI reply after delay
-      setTimeout(() => {
-        botMsg.innerText = getBotReply(text);
-        chatbox.scrollTop = chatbox.scrollHeight;
-      }, 1000);
-    }
-
-    function getBotReply(msg) {
-      msg = msg.toLowerCase();
-      if (msg.includes("hello")) return "Hello 👋, I’m Queen Aura!";
-      if (msg.includes("how are you")) return "I’m doing great 🌸, thanks for asking!";
-      if (msg.includes("bye")) return "Goodbye 👑, come back soon!";
-      return "Hmm 🤔... I don’t know that yet, but I’m learning every day!";
-    }
-  </script>
 </body>
 </html>
